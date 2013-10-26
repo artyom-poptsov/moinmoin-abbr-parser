@@ -75,10 +75,6 @@ class Parser(wiki.Parser):
         except:
             return self.request.formatter.escapedText(key)
 
-    def dicts(self, request):
-        from MoinMoin.datastruct import WikiDicts
-        return WikiDicts(request)
-
     def _abbr_repl(self, word, groups):
         # Get rid of markup elements
         word = word[1:-1].strip()

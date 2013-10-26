@@ -1,4 +1,5 @@
 2013-10-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* abbr.py: Fix the script so now it works with MoinMoin 1.9.
+	(dicts): Remove extra function.
 
