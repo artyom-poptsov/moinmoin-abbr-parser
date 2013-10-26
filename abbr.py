@@ -45,64 +45,67 @@
 
     MoinMoin - Abbreviation Parser
     @copyright: 2007 by Oliver Siemoneit
+    @copyright: 2013 by Artyom Poptsov <poptsov.artyom@gmail.com>
     @license: GNU GPL, see COPYING for details.
 """
 
-
 from MoinMoin.parser import text_moin_wiki as wiki
-from MoinMoin.wikidicts import Dict
+from MoinMoin.datastruct.backends.wiki_dicts import WikiDict
 from MoinMoin import wikiutil
 import re
 
-#Dependencies = ['pages']
-
 class Parser(wiki.Parser):
-    def __init__(self, raw, request, **kw):
-        self.formatting_rules = ur"(?P<abbr>\^[^\^]*\^)"+"\n" + self.formatting_rules
-        wiki.Parser.__init__(self, raw, request, **kw)
-        self.abbr_dict = Dict(request, "AbbrDict")
+    scan_rules = wiki.Parser.scan_rules
+    scan_rules += ur'|(?P<abbr>\?[^\?]*\?)'
+    scan_re = re.compile(scan_rules, re.UNICODE|re.VERBOSE)
 
-    def _abbr_repl(self, word):
-        dictpage = self.request.getPragma('abbreviation-definitions')
-        word = word[1:-1]
-        word = word.strip()
+    def __init__(self, raw, request, **kw):
+        wiki.Parser.__init__(self, raw, request, **kw)
+        self.formatter = request.formatter
+        self.request = request
+        self.args = kw.get('format_args', '')
+
+    def format_abbr(self, lang, key, exp):
+        try:
+            html = '<abbr title="%(exp)s" %(lang)s>%(word)s</abbr>' % {
+                'exp': wikiutil.escape(exp),
+                'lang': lang,
+                'word': wikiutil.escape(key) }
+            return self.request.formatter.rawHTML(html)
+        except:
+            return self.request.formatter.escapedText(key)
+
+    def dicts(self, request):
+        from MoinMoin.datastruct import WikiDicts
+        return WikiDicts(request)
+
+    def _abbr_repl(self, word, groups):
+        # Get rid of markup elements
+        word = word[1:-1].strip()
+
         key = word
         exp = ''
-        tmp = word.split('|', 1)
-        if len(tmp) == 2:
-            key = tmp[0]
-            dictpage = tmp[1]
-        else:
-            tmp = word.split(':', 1)
-            if len(tmp) == 2:
-                key = tmp[0]
-                exp = tmp[1]
+        tmp = word.split('|')
 
         lang = ''
-        tmp = word.rsplit('|', 1)
-        if (len(tmp) == 2) and (tmp[1].startswith('language=')):
-            lang = ' lang=%s' % tmp[1].split('=', 1)[1]
 
-        # Explanation directly given?
+        if len(tmp) >= 2:
+            key = tmp[0]
+            exp = tmp[1]
+
+        # Check if "lang" attribute is set
+        if (len(tmp) == 3) and (tmp[2].startswith('lang=')):
+            lang = 'lang="%s"' % tmp[2].split("=", 1)[1]
+ 
+        # Explanation is directly given?
         if exp:
-            try:
-                html = '<abbr title="%(exp)s"%(lang)s>%(word)s</abbr>' % {
-                    'exp': wikiutil.escape(exp),
-                    'lang': lang,
-                    'word': wikiutil.escape(key) }
-                return self.request.formatter.rawHTML(html)
-            except:
-                return self.request.formatter.escapedText(key)
+            return self.format_abbr(lang, key, exp)
 
-        if not self.abbr_dict.has_key(key):
+        # Locate definition in the standard dictionary
+        d = self.request.dicts.get(u"AbbrDict", {})
+        exp = d.get(key, {})
+        if not exp:
             return self.request.formatter.escapedText(key)
         else:
-            try:
-                html = '<abbr title="%(exp)s"%(lang)s>%(word)s</abbr>' % {
-                    'exp': wikiutil.escape(self.abbr_dict[key].replace('"','&quot;')),
-                    'lang': lang,
-                    'word': wikiutil.escape(key) }
-                return self.request.formatter.rawHTML(html)
-            except:
-                return self.request.formatter.escapedText(key)
+            return self.format_abbr(lang, key, exp)
 
