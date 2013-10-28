@@ -75,33 +75,48 @@ class Parser(wiki.Parser):
         except:
             return self.request.formatter.escapedText(key)
 
+    def get_value(self, attr, tokens):
+        res = ''
+        for t in tokens:
+            if t.startswith(attr + '='):
+                res = t.split('=', 1)[1]
+                break
+        return res
+
     def _abbr_repl(self, word, groups):
         # Get rid of markup elements
         word = word[1:-1].strip()
 
-        key = word
-        exp = ''
-        tmp = word.split('|')
-
+        abbr = ''
+        expl = ''
         lang = ''
+        tokens = word.split('|')
+        abbr = tokens[0]
 
-        if len(tmp) >= 2:
-            key = tmp[0]
-            exp = tmp[1]
+        # Check if explanation is already given
+        tmp = abbr.split(':')
+        if len(tmp) == 2:
+            abbr = tmp[0]
+            expl = tmp[1]
 
         # Check if "lang" attribute is set
-        if (len(tmp) == 3) and (tmp[2].startswith('lang=')):
-            lang = 'lang="%s"' % tmp[2].split("=", 1)[1]
+        tmp = self.get_value("lang", tokens)
+        if tmp:
+            lang = 'lang="%s"' % tmp
  
         # Explanation is directly given?
-        if exp:
-            return self.format_abbr(lang, key, exp)
+        if expl:
+            return self.format_abbr(lang, abbr, expl)
 
-        # Locate definition in the standard dictionary
-        d = self.request.dicts.get(u"AbbrDict", {})
-        exp = d.get(key, {})
-        if not exp:
-            return self.request.formatter.escapedText(key)
+        page = self.get_value("page", tokens)
+        if not page:
+            # Locate definition in the standard dictionary
+            page = u"AbbrDict"
+
+        dictionary = self.request.dicts.get(page, {})
+        expl = dictionary.get(abbr, {})
+        if not expl:
+            return self.request.formatter.escapedText(expl)
         else:
-            return self.format_abbr(lang, key, exp)
+            return self.format_abbr(lang, abbr, expl)
 
