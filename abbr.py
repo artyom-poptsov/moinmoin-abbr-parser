@@ -67,7 +67,7 @@ class Parser(wiki.Parser):
 
     def format_abbr(self, lang, key, exp):
         try:
-            html = '<abbr title="%(exp)s" %(lang)s>%(word)s</abbr>' % {
+            html = '<abbr title="%(exp)s" lang="%(lang)s">%(word)s</abbr>' % {
                 'exp': wikiutil.escape(exp),
                 'lang': lang,
                 'word': wikiutil.escape(key) }
@@ -100,9 +100,7 @@ class Parser(wiki.Parser):
             expl = tmp[1]
 
         # Check if "lang" attribute is set
-        tmp = self.get_value("lang", tokens)
-        if tmp:
-            lang = 'lang="%s"' % tmp
+        lang = self.get_value("lang", tokens)
  
         # Explanation is directly given?
         if expl:

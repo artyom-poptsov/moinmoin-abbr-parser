@@ -2,6 +2,7 @@
 
 	* abbr.py (Parser.get_value): New procedure.
 	(Parser._abbr_repl): Improve parsing.
+	(Parser.format_abbr): Improve.
 
 2013-10-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
