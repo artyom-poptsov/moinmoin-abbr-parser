@@ -1,3 +1,8 @@
+2013-10-30  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* abbr.py (Parser._abbr_repl): Fix a bug: return the abbreviation
+	if no explanation is found.
+
 2013-10-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* abbr.py (Parser.get_value): New procedure.

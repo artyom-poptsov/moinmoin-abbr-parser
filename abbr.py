@@ -114,7 +114,7 @@ class Parser(wiki.Parser):
         dictionary = self.request.dicts.get(page, {})
         expl = dictionary.get(abbr, {})
         if not expl:
-            return self.request.formatter.escapedText(expl)
+            return self.request.formatter.escapedText(abbr)
         else:
             return self.format_abbr(lang, abbr, expl)
 
