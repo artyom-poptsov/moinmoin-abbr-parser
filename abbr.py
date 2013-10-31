@@ -87,10 +87,7 @@ class Parser(wiki.Parser):
     def _abbr_repl(self, word, groups):
         # Get rid of markup elements
         word = word[1:-1].strip()
-
-        abbr = ''
         expl = ''
-        lang = ''
         tokens = word.split('|')
         abbr = tokens[0]
 

@@ -2,7 +2,7 @@
 
 	* abbr.py (Parser::dummy::_abbr_repl): Check if a custom
 	dictionary page is specified before using the default dictionary
-	page.  Update comments.
+	page.  Update comments.  Cleanup the code.
 
 2013-10-30  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
