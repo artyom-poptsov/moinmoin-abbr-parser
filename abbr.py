@@ -11,22 +11,22 @@
     is used in AccessibleMoin to mark acronyms and abbreviations.
 
     Syntax:
-        ^WAI^
+        ?WAI?
         Marks the word WAI as an abbreviation and tries to retrieve the explanation from
         the standard abbreviation definitions page "AbbrDict" or the page specified
         with "#pragma abbreviation-definitions PageName" in the header of the page.
 
-        ^WAI|OtherPage^
+        ?WAI|page=OtherPage?
         Marks the word WAI as an abbreviation and tries to retrieve the explanation from
         the specified page "OtherPage". You can use this to overwrite the default settings
         like "AbbrDict" or "#pragma abbreviation-definitions PageName"        
 
-        ^WAI:Web Accessibility Initiative^
+        ?WAI:Web Accessibility Initiative?
         Marks the word WAI as an abbreviation and uses the given explanation.
 
-        ^WAI|language=de^
-        ^WAI|OtherPage|language=de^
-        ^WAI:Web Accessibility Initiative|language=de^
+        ?WAI|lang=de?
+        ?WAI|page=OtherPage|lang=de?
+        ?WAI:Web Accessibility Initiative|lang=de?
         Marks the word WAI as an foreign language abbreviation (compared to the language
         default of the wiki and the page)
 
@@ -34,7 +34,7 @@
     * The explanation pages for abbreviations must be in WikiDict format, like
       " WAI:: Web Accessibility Initiative" (don't forget the space at the beginning!)
     * If the abbreviation is in an other language than the default page language, please
-      mark this with "|language=LanguageShortcut"
+      mark this with "|lang=LanguageShortcut"
     * Don't forget the caching mechanism of Moin: To get a page updated with a changed
       abbreviation explanation (e.g. from AbbrDict) you have to delete the cache of the page
       or reedit the page again.
@@ -58,6 +58,7 @@ class Parser(wiki.Parser):
     scan_rules = wiki.Parser.scan_rules
     scan_rules += ur'|(?P<abbr>\?[^\?]*\?)'
     scan_re = re.compile(scan_rules, re.UNICODE|re.VERBOSE)
+    default_dict = u"AbbrDict"
 
     def __init__(self, raw, request, **kw):
         wiki.Parser.__init__(self, raw, request, **kw)
@@ -102,14 +103,17 @@ class Parser(wiki.Parser):
         # Check if "lang" attribute is set
         lang = self.get_value("lang", tokens)
  
-        # Explanation is directly given?
+        # Is explanation directly given?
         if expl:
             return self.format_abbr(lang, abbr, expl)
 
         page = self.get_value("page", tokens)
         if not page:
-            # Locate definition in the standard dictionary
-            page = u"AbbrDict"
+            custom_dict = self.request.getPragma('abbreviation-definitions')
+            if not custom_dict:
+                page = self.default_dict
+            else:
+                page = custom_dict
 
         dictionary = self.request.dicts.get(page, {})
         expl = dictionary.get(abbr, {})

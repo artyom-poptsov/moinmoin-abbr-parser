@@ -1,3 +1,9 @@
+2013-10-31  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* abbr.py (Parser::dummy::_abbr_repl): Check if a custom
+	dictionary page is specified before using the default dictionary
+	page.  Update comments.
+
 2013-10-30  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* abbr.py (Parser._abbr_repl): Fix a bug: return the abbreviation
