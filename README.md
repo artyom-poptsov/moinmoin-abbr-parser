@@ -26,8 +26,8 @@ instead of carets:
     ^WAI^
 
 The reason for this change is that carets are also used for making
-superscript text, so normally '^WAI^' expanded to HTML code
-'<sup>WAI</sup>'.
+superscript text, so normally `^WAI^` expanded to HTML code
+`<sup>WAI</sup>`.
 
 On the other hand, question marks don't conflict with other of
 MoinMoin markup elements.
@@ -65,7 +65,7 @@ Because it is shorter.
 ### Other notable changes
 
  - Order of attributes ("page" and "lang") doesn't matter.
- - Value of "lang" attribute for '<abbr>' is wrapped into quotes
+ - Value of "lang" attribute for `<abbr>` is wrapped into quotes
    according to [recommendations of W3C][3].
    
 
