@@ -1,5 +1,7 @@
 2013-10-31  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* README: Add to the repository.
+
 	* abbr.py (Parser::dummy::_abbr_repl): Check if a custom
 	dictionary page is specified before using the default dictionary
 	page.  Update comments.  Cleanup the code.
