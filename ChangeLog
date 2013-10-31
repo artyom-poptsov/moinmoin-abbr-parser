@@ -2,6 +2,7 @@
 
 	* README.md: New file.
 	* README: Remove.
+	* .gitignore: Add to the repository.
 
 2013-10-31  Artyom Poptsov  <poptsov.artyom@gmail.com>
 

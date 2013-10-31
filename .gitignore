@@ -1,0 +1,7 @@
+# -*- shell-script -*-
+
+# Backup files
+*\~
+
+# Compiled Python files
+*.pyc
