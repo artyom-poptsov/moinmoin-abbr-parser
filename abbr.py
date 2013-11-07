@@ -56,7 +56,7 @@ import re
 
 class Parser(wiki.Parser):
     scan_rules = wiki.Parser.scan_rules
-    scan_rules += ur'|(?P<abbr>\?[^\?]*\?)'
+    scan_rules += ur'|(?P<abbr>\?[^\?!\.\s][^\?]*\?)'
     scan_re = re.compile(scan_rules, re.UNICODE|re.VERBOSE)
     default_dict = u"AbbrDict"
 
