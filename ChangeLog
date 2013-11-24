@@ -1,6 +1,12 @@
+2013-11-24  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* abbr.py (Parser): Match only words in which the first character
+	is an alphabetic character (in the current locale), number or an
+	underscore.
+
 2013-11-07  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
-	* abbr.py (Parser::scan_re): Improve regexp.
+	* abbr.py (Parser): Improve regexp.
 
 2013-11-04  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
